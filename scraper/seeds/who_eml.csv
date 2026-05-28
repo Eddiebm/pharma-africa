@@ -1,0 +1,104 @@
+inn,atc_code,category
+artemether,P01BF01,antimalarial
+lumefantrine,P01BF01,antimalarial
+artesunate,P01BE03,antimalarial
+artesunate+amodiaquine,P01BF02,antimalarial
+quinine,P01BC01,antimalarial
+chloroquine,P01BA01,antimalarial
+primaquine,P01BA03,antimalarial
+mefloquine,P01BC02,antimalarial
+amoxicillin,J01CA04,antibiotic
+amoxicillin+clavulanic acid,J01CR02,antibiotic
+ampicillin,J01CA01,antibiotic
+azithromycin,J01FA10,antibiotic
+ciprofloxacin,J01MA02,antibiotic
+metronidazole,P01AB01,antibiotic
+cotrimoxazole,J01EE01,antibiotic
+doxycycline,J01AA02,antibiotic
+tetracycline,J01AA07,antibiotic
+erythromycin,J01FA01,antibiotic
+clindamycin,J01FF01,antibiotic
+cloxacillin,J01CF02,antibiotic
+benzylpenicillin,J01CE01,antibiotic
+phenoxymethylpenicillin,J01CE02,antibiotic
+ceftriaxone,J01DD04,antibiotic
+gentamicin,J01GB03,antibiotic
+nitrofurantoin,J01XE01,antibiotic
+tenofovir,J05AF07,antiretroviral
+lamivudine,J05AF05,antiretroviral
+efavirenz,J05AG03,antiretroviral
+nevirapine,J05AG01,antiretroviral
+zidovudine,J05AF01,antiretroviral
+abacavir,J05AF06,antiretroviral
+lopinavir,J05AE06,antiretroviral
+ritonavir,J05AE03,antiretroviral
+dolutegravir,J05AJ03,antiretroviral
+atazanavir,J05AE08,antiretroviral
+emtricitabine,J05AF09,antiretroviral
+isoniazid,J04AC01,antituberculosis
+rifampicin,J04AB02,antituberculosis
+pyrazinamide,J04AK01,antituberculosis
+ethambutol,J04AK02,antituberculosis
+streptomycin,J01GA01,antituberculosis
+bedaquiline,J04AK05,antituberculosis
+linezolid,J01XX08,antituberculosis
+paracetamol,N02BE01,analgesic
+ibuprofen,M01AE01,analgesic
+diclofenac,M01AB05,analgesic
+morphine,N02AA01,analgesic
+tramadol,N02AX02,analgesic
+codeine,R05DA04,analgesic
+omeprazole,A02BC01,gastrointestinal
+ranitidine,A02BA02,gastrointestinal
+metoclopramide,A03FA01,gastrointestinal
+oral rehydration salts,A07CA,gastrointestinal
+zinc sulfate,A12CB01,gastrointestinal
+metformin,A10BA02,diabetes
+glibenclamide,A10BB01,diabetes
+insulin human,A10AB01,diabetes
+amlodipine,C08CA01,cardiovascular
+atorvastatin,C10AA05,cardiovascular
+lisinopril,C09AA03,cardiovascular
+hydrochlorothiazide,C03AA03,cardiovascular
+atenolol,C07AB03,cardiovascular
+furosemide,C03CA01,cardiovascular
+digoxin,C01AA05,cardiovascular
+salbutamol,R03AC02,respiratory
+ipratropium,R03BB01,respiratory
+beclometasone,R03BA01,respiratory
+prednisolone,H02AB06,corticosteroid
+dexamethasone,H02AB02,corticosteroid
+hydrocortisone,H02AB09,corticosteroid
+diazepam,N05BA01,neurological
+phenobarbitone,N03AA02,neurological
+carbamazepine,N03AF01,neurological
+phenytoin,N03AB02,neurological
+valproic acid,N03AG01,neurological
+haloperidol,N05AD01,psychiatric
+chlorpromazine,N05AA01,psychiatric
+amitriptyline,N06AA09,psychiatric
+fluoxetine,N06AB03,psychiatric
+oxytocin,H01BB02,obstetric
+ergometrine,G02AB03,obstetric
+misoprostol,G02AD06,obstetric
+magnesium sulfate,A12CC02,obstetric
+ferrous sulfate,B03AA07,nutritional
+folic acid,B03BB01,nutritional
+vitamin A,A11CA01,nutritional
+nystatin,A07AA02,antifungal
+fluconazole,J02AC01,antifungal
+amphotericin B,J02AA01,antifungal
+aciclovir,J05AB01,antiviral
+oseltamivir,J05AH02,antiviral
+ivermectin,P02CF01,antiparasitic
+albendazole,P02CA03,antiparasitic
+praziquantel,P02BA01,antiparasitic
+sodium stibogluconate,P01CB01,antiparasitic
+pentamidine,P01CX01,antiparasitic
+atropine,A03BA01,other
+epinephrine,C01CA24,other
+naloxone,V03AB15,other
+lidocaine,N01BB02,other
+ketamine,N01AX03,other
+halothane,N01AB01,other
+water for injection,V07AB,other
