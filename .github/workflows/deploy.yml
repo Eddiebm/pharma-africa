@@ -10,7 +10,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy
+      - name: Sync source to server
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          rsync -avz --delete \
+            --exclude='.next' \
+            --exclude='node_modules' \
+            -e "ssh -i /tmp/deploy_key -o StrictHostKeyChecking=no" \
+            web/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/afireg-web/
+
+      - name: Build and restart
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -18,7 +28,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /opt/afireg-web
-            git pull origin main
             ~/.bun/bin/bun install --production
             ~/.bun/bin/bun run build
             /mnt/HC_Volume_105574622/node_modules/pm2/bin/pm2 restart afireg-web
