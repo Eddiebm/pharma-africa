@@ -14,6 +14,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   "new-registrations": "New Registrations",
   "generic-opportunities": "Generic Opportunities",
   "market-entry": "Market Entry Intelligence",
+  "monthly-roundup": "Monthly Roundup",
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -21,6 +22,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   "new-registrations": "bg-green-100 text-green-700",
   "generic-opportunities": "bg-blue-100 text-blue-700",
   "market-entry": "bg-purple-100 text-purple-700",
+  "monthly-roundup": "bg-amber-100 text-amber-700",
 };
 
 type Post = {

@@ -10,6 +10,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   "new-registrations": "New Registrations",
   "generic-opportunities": "Generic Opportunities",
   "market-entry": "Market Entry Intelligence",
+  "monthly-roundup": "Monthly Roundup",
 };
 
 type Post = {

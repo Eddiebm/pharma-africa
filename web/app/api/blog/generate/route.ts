@@ -9,7 +9,7 @@ const COUNTRIES: Record<string, string> = {
   TN: "Tunisia",
 };
 
-const CATEGORIES = ["expiry-watch", "new-registrations", "generic-opportunities", "market-entry"] as const;
+const CATEGORIES = ["expiry-watch", "new-registrations", "generic-opportunities", "market-entry", "monthly-roundup"] as const;
 type Category = typeof CATEGORIES[number];
 
 function slugify(text: string): string {
@@ -54,14 +54,14 @@ export async function POST(req: Request) {
   if (!dbUrl) return Response.json({ error: "Internal server error" }, { status: 500 });
   if (!openrouterKey) return Response.json({ error: "OPENROUTER_API_KEY not configured" }, { status: 503 });
 
-  let body: { type: Category; country_code?: string };
+  let body: { type: Category; country_code?: string; report_slug?: string };
   try {
     body = await req.json();
   } catch {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { type, country_code = "" } = body;
+  const { type, country_code = "", report_slug = "" } = body;
   if (!CATEGORIES.includes(type)) {
     return Response.json({ error: `type must be one of: ${CATEGORIES.join(", ")}` }, { status: 400 });
   }
@@ -131,6 +131,69 @@ Drug | Original Holder | Country | Expired
 ${table}
 
 Analyse which molecules represent the best generic opportunities — consider therapeutic importance, market size, and which registrations have no active alternatives.`;
+  } else if (type === "monthly-roundup") {
+    const [totals, newRegs, expiring, topHolders] = await Promise.all([
+      sql`
+        SELECT country_code, COUNT(*) AS total, COUNT(*) FILTER (WHERE status = 'active') AS active
+        FROM registrations WHERE source_type != 'alert'
+        GROUP BY country_code ORDER BY active DESC LIMIT 15
+      `,
+      sql`
+        SELECT country_code, COUNT(*) AS count
+        FROM registrations
+        WHERE created_at >= NOW() - INTERVAL '30 days' AND source_type != 'alert'
+        GROUP BY country_code ORDER BY count DESC LIMIT 10
+      `,
+      sql`
+        SELECT country_code, COUNT(*) AS count
+        FROM registrations
+        WHERE status = 'active' AND expiry_date BETWEEN NOW() AND NOW() + INTERVAL '90 days'
+          AND source_type != 'alert'
+        GROUP BY country_code ORDER BY count DESC LIMIT 10
+      `,
+      sql`
+        SELECT holder, COUNT(*) AS registrations
+        FROM registrations WHERE status = 'active' AND holder IS NOT NULL AND source_type != 'alert'
+        GROUP BY holder ORDER BY registrations DESC LIMIT 10
+      `,
+    ]);
+
+    rows = totals;
+    const reportUrl = report_slug
+      ? `https://africaregulatory.com/reports/${report_slug}.pdf`
+      : "https://africaregulatory.com/reports";
+
+    const totalsTable = totals.map(r => `${COUNTRIES[r.country_code as string] || r.country_code} | ${r.active} active | ${r.total} total`).join("\n");
+    const newRegsTable = newRegs.map(r => `${COUNTRIES[r.country_code as string] || r.country_code} | ${r.count} new`).join("\n");
+    const expiringTable = expiring.map(r => `${COUNTRIES[r.country_code as string] || r.country_code} | ${r.count} expiring`).join("\n");
+    const holdersTable = topHolders.map(r => `${r.holder} | ${r.registrations}`).join("\n");
+
+    userPrompt = `Write a monthly roundup blog post titled something like "African Pharmaceutical Regulation: ${monthYear} Market Intelligence Roundup".
+
+This is the definitive monthly summary of drug registration activity across all tracked African markets.
+
+MARKET TOTALS (active registrations by country):
+${totalsTable}
+
+NEW REGISTRATIONS (last 30 days):
+${newRegsTable}
+
+REGISTRATIONS EXPIRING IN 90 DAYS:
+${expiringTable}
+
+TOP 10 MOST ACTIVE REGISTRATION HOLDERS:
+${holdersTable}
+
+Write a comprehensive roundup covering:
+1. Overall market health and the scale of Africa's pharmaceutical registration landscape
+2. Which markets saw the most new registrations this month and what it signals
+3. The expiry pipeline — which markets need regulatory attention in the next quarter
+4. Who the dominant registration holders are and what that concentration means
+5. What regulatory affairs teams should be watching in the month ahead
+
+End with a paragraph noting that the full detailed report with all data tables is available for download at: ${reportUrl}
+Also end with a paragraph about how AfriReg Pro members receive this report automatically each month plus weekly expiry alerts.`;
+
   } else {
     // market-entry
     rows = await sql`
