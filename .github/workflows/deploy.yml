@@ -1,0 +1,24 @@
+name: Deploy to Hetzner
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /opt/afireg-web
+            git pull origin main
+            ~/.bun/bin/bun install --production
+            ~/.bun/bin/bun run build
+            /mnt/HC_Volume_105574622/node_modules/pm2/bin/pm2 restart afireg-web
