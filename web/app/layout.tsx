@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: "AfricaRegulatory — African Pharmaceutical Regulatory Intelligence",
   description: "Search 95,000+ drug registrations across 15 African markets. Track expiry dates, new approvals, and market opportunities.",
   metadataBase: new URL("https://africaregulatory.com"),
+  verification: {
+    google: "E0ijiNWr8RmygHW3iS0Ave61YZQAaxg34Bw8EX3MnvU",
+  },
 };
 
 export default function RootLayout({
