@@ -12,7 +12,7 @@ export async function GET(req: Request) {
   const sql = neon(dbUrl);
   const reports = await sql`
     SELECT id, slug, title, description, pdf_path, period_start, period_end, published_at
-    FROM reports
+    FROM monthly_reports
     ORDER BY period_start DESC
     LIMIT ${limit}
   `;

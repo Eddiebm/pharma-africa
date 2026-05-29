@@ -25,7 +25,7 @@ async function getReports(): Promise<Report[]> {
   const sql = neon(dbUrl);
   const rows = await sql`
     SELECT slug, title, description, pdf_path, period_start, period_end, published_at
-    FROM reports ORDER BY period_start DESC LIMIT 24
+    FROM monthly_reports ORDER BY period_start DESC LIMIT 24
   `;
   return rows as unknown as Report[];
 }
