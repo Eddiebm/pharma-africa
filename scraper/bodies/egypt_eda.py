@@ -43,8 +43,9 @@ CAPTCHA_FIELD      = "ctl00$ContentPlaceHolder1$txtimgcode"
 SEARCH_BTN_FIELD   = "ctl00$ContentPlaceHolder1$ui_btnSearch"
 GRIDVIEW_ID        = "ctl00$ContentPlaceHolder1$GridView1"
 
-# 26 3-letter prefixes — one per starting letter, broad enough to paginate all under it
-SEARCH_PREFIXES = [letter + "aa" for letter in string.ascii_lowercase]
+# 676 3-letter prefixes (26×26 two-letter starts + "a") — covers all possible drug name starts
+# EDA portal requires minimum 3 chars; "aaa","aba","aca"..."zza" ensures full alphabetic coverage
+SEARCH_PREFIXES = [a + b + "a" for a in string.ascii_lowercase for b in string.ascii_lowercase]
 
 log = logging.getLogger("EDA_EG")
 

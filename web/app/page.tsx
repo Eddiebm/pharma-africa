@@ -49,7 +49,11 @@ export default function Home() {
             <h1 className="text-xl font-bold text-gray-900">AfriReg</h1>
             <p className="text-xs text-gray-500">African Pharmaceutical Regulatory Intelligence</p>
           </div>
-          <span className="text-xs text-gray-400">90,000+ registrations · 15 African markets</span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-gray-400 hidden sm:block">90,000+ registrations · 15 African markets</span>
+            <a href="/login" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Sign in</a>
+            <a href="/signup" className="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">Sign up free</a>
+          </div>
         </div>
       </header>
 
