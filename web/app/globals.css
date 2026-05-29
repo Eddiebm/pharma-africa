@@ -24,3 +24,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Blog prose styles */
+.prose h2 { font-size: 1.25rem; font-weight: 700; color: #111827; margin: 2rem 0 0.75rem; }
+.prose p { color: #374151; line-height: 1.75; margin-bottom: 1rem; }
+.prose p.lead { font-size: 1.05rem; font-weight: 500; color: #1f2937; }
+.prose .data-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.875rem; }
+.prose .data-table thead { background: #f3f4f6; }
+.prose .data-table th { padding: 0.625rem 0.875rem; text-align: left; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
+.prose .data-table td { padding: 0.5rem 0.875rem; border-bottom: 1px solid #f3f4f6; color: #374151; }
+.prose .data-table tbody tr:hover { background: #f9fafb; }
