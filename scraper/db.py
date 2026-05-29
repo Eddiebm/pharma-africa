@@ -31,7 +31,8 @@ def compute_hash(record: RegistrationRecord) -> str:
 def upsert(conn: connection, record: RegistrationRecord) -> bool:
     """
     Insert or update a registration record.
-    Returns True if a write occurred (new or changed), False if unchanged.
+    Always bumps last_verified to confirm the record still exists in the source.
+    Returns True if data changed (new record or hash changed), False if only last_verified updated.
     """
     h = compute_hash(record)
     with conn.cursor() as cur:
@@ -43,6 +44,7 @@ def upsert(conn: connection, record: RegistrationRecord) -> bool:
             ) VALUES (%s,%s,%s,%s,%s, %s,%s,%s,%s, %s,%s,%s, now())
             ON CONFLICT (country_code, registration_no)
             DO UPDATE SET
+                last_verified   = now(),
                 inn             = EXCLUDED.inn,
                 brand_name      = EXCLUDED.brand_name,
                 status          = EXCLUDED.status,
@@ -50,18 +52,29 @@ def upsert(conn: connection, record: RegistrationRecord) -> bool:
                 holder          = EXCLUDED.holder,
                 local_agent     = EXCLUDED.local_agent,
                 dosage_forms    = EXCLUDED.dosage_forms,
-                raw_source_hash = EXCLUDED.raw_source_hash,
-                last_verified   = now()
-            WHERE registrations.raw_source_hash != EXCLUDED.raw_source_hash
-            RETURNING id
+                source_url      = EXCLUDED.source_url,
+                raw_source_hash = EXCLUDED.raw_source_hash
+            RETURNING id, (xmax = 0 OR raw_source_hash = %s) AS data_changed
         """, (
             record.inn, record.brand_name, record.country_code,
             record.registration_no or f"UNKNOWN-{h[:8]}",
             record.holder, record.local_agent,
             record.status, record.expiry_date, record.dosage_forms,
             record.source_url, record.source_type, h,
+            h,
         ))
-        return cur.fetchone() is not None
+        row = cur.fetchone()
+        return bool(row and row[1])
+
+
+def update_last_scraped(conn: connection, country_code: str):
+    with conn.cursor() as cur:
+        cur.execute("""
+            INSERT INTO regulatory_bodies (country_code, name, last_scraped)
+            VALUES (%s, %s, now())
+            ON CONFLICT (country_code) DO UPDATE SET last_scraped = now()
+        """, (country_code, country_code))
+    conn.commit()
 
 
 def log_error(conn: connection, body_code: str, error: str):

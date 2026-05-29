@@ -96,6 +96,8 @@ def run_scraper(scraper, conn, dry_run: bool) -> dict:
                     conn.rollback()
                     break
             conn.commit()
+            if not result["error"]:
+                db.update_last_scraped(conn, scraper.country_code)
 
     except Exception as e:
         result["error"] = str(e)

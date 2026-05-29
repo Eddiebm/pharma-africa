@@ -75,6 +75,7 @@ CREATE INDEX IF NOT EXISTS idx_reg_expiry       ON registrations (expiry_date) W
 CREATE INDEX IF NOT EXISTS idx_reg_inn          ON registrations USING GIN (inn gin_trgm_ops);
 CREATE INDEX IF NOT EXISTS idx_reg_brand        ON registrations USING GIN (brand_name gin_trgm_ops);
 CREATE INDEX IF NOT EXISTS idx_reg_product      ON registrations (product_id) WHERE product_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_reg_last_verified ON registrations (last_verified);
 
 -- -----------------------------------------------------------------------
 -- Regulatory body metadata per country
