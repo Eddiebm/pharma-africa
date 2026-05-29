@@ -267,5 +267,13 @@ Analyse the market access gaps — these represent opportunities for manufacture
     VALUES (${slug}, ${post.title}, ${post.description}, ${post.content}, ${type}, ${country_code || null})
   `;
 
+  // Ping search engines so the new post gets picked up quickly
+  const postUrl = encodeURIComponent(`https://africaregulatory.com/blog/${slug}`);
+  const sitemapUrl = encodeURIComponent("https://africaregulatory.com/sitemap.xml");
+  await Promise.allSettled([
+    fetch(`https://www.google.com/ping?sitemap=${sitemapUrl}`),
+    fetch(`https://www.bing.com/ping?sitemap=${sitemapUrl}`),
+  ]);
+
   return Response.json({ ok: true, slug, title: post.title });
 }

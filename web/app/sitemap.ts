@@ -1,3 +1,6 @@
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
+
 import type { MetadataRoute } from "next";
 import { neon } from "@neondatabase/serverless";
 
@@ -5,10 +8,12 @@ const BASE = "https://africaregulatory.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const static_routes: MetadataRoute.Sitemap = [
-    { url: BASE, lastModified: new Date(), changeFrequency: "weekly", priority: 1.0 },
-    { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
-    { url: `${BASE}/signup`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
-    { url: `${BASE}/login`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: BASE,                  lastModified: new Date(), changeFrequency: "weekly",  priority: 1.0 },
+    { url: `${BASE}/blog`,        lastModified: new Date(), changeFrequency: "daily",   priority: 0.9 },
+    { url: `${BASE}/reports`,     lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/pricing`,     lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/signup`,      lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/login`,       lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
   ];
 
   const dbUrl = process.env.DATABASE_URL;
