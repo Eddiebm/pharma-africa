@@ -28,6 +28,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /opt/afireg-web
-            ~/.bun/bin/bun install --production
+            ~/.bun/bin/bun install
             ~/.bun/bin/bun run build
             /mnt/HC_Volume_105574622/node_modules/pm2/bin/pm2 restart afireg-web
