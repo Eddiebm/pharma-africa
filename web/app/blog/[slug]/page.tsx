@@ -87,6 +87,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </div>
           <div className="flex items-center gap-3">
             <Link href="/blog" className="text-sm text-gray-600 hover:text-gray-900">Blog</Link>
+            <Link href="/reports" className="text-sm text-gray-600 hover:text-gray-900">Reports</Link>
+            <Link href="/pricing" className="text-sm text-gray-600 hover:text-gray-900">Pricing</Link>
             <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900">Sign in</Link>
             <Link href="/signup" className="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">Sign up free</Link>
           </div>

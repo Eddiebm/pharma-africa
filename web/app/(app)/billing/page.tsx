@@ -53,12 +53,14 @@ function BillingContent() {
             <h2 className="font-semibold text-gray-900">Pro</h2>
             {isPro && <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Current plan</span>}
           </div>
-          <p className="text-3xl font-bold text-gray-900 mb-1">$499<span className="text-base font-normal text-gray-500">/mo</span></p>
+          <p className="text-3xl font-bold text-gray-900 mb-1">$199<span className="text-base font-normal text-gray-500">/mo</span></p>
           <ul className="text-sm text-gray-600 space-y-1.5 mt-4">
             <li>✓ Unlimited searches</li>
             <li>✓ All 15+ markets</li>
-            <li>✓ Expiry alerts via email</li>
+            <li>✓ Expiry alerts (90-day notice)</li>
             <li>✓ Portfolio tracker (CSV import)</li>
+            <li>✓ Weekly digest emails</li>
+            <li>✓ Monthly intelligence reports</li>
           </ul>
           {!isPro && (
             <button onClick={upgrade} disabled={loading}
