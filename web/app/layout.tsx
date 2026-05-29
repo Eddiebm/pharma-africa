@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AfriReg — African Pharmaceutical Regulatory Intelligence",
-  description: "Search 95,000+ drug registrations across 15 African markets",
+  title: "AfricaRegulatory — African Pharmaceutical Regulatory Intelligence",
+  description: "Search 95,000+ drug registrations across 15 African markets. Track expiry dates, new approvals, and market opportunities.",
+  metadataBase: new URL("https://africaregulatory.com"),
 };
 
 export default function RootLayout({

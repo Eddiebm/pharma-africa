@@ -64,7 +64,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     publisher: {
       "@type": "Organization",
       name: "AfriReg",
-      url: "https://afireg.com",
+      url: "https://africaregulatory.com",
     },
     about: {
       "@type": "Thing",

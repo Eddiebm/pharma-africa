@@ -54,9 +54,8 @@ export async function verifyToken(req: Request): Promise<SessionUser | null> {
   }
 }
 
-// No Secure flag — add it when HTTPS is configured
 export const sessionCookieSet = (token: string) =>
-  `app_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${7 * 24 * 3600}`;
+  `app_session=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${7 * 24 * 3600}`;
 
 export const sessionCookieClear = () =>
-  `app_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0`;
+  `app_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0`;
