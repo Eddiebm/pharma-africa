@@ -4,6 +4,102 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
+const ERROR_TYPES = [
+  { value: "wrong_status",  label: "Status is wrong (active / expired / suspended)" },
+  { value: "wrong_expiry",  label: "Expiry date is incorrect" },
+  { value: "wrong_holder",  label: "Holder or company name is wrong" },
+  { value: "not_found",     label: "Can't find this on the official registry" },
+  { value: "duplicate",     label: "This is a duplicate record" },
+  { value: "other",         label: "Something else" },
+];
+
+function ReportErrorWidget({ registrationId }: { registrationId: string }) {
+  const [open, setOpen] = useState(false);
+  const [errorType, setErrorType] = useState("");
+  const [notes, setNotes] = useState("");
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+
+  async function submit() {
+    if (!errorType) return;
+    setStatus("sending");
+    const res = await fetch(`/api/record/${registrationId}/report`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error_type: errorType, notes: notes || undefined, reporter_email: email || undefined }),
+    });
+    setStatus(res.ok ? "done" : "error");
+  }
+
+  if (!open) {
+    return (
+      <button onClick={() => setOpen(true)} className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
+        Report an error with this record
+      </button>
+    );
+  }
+
+  if (status === "done") {
+    return (
+      <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm text-green-700">
+        Thanks — we'll review this and correct it within 48 hours.
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-gray-900">Report an error</h3>
+        <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 text-lg leading-none">×</button>
+      </div>
+
+      <div className="space-y-2">
+        <p className="text-xs text-gray-500">What's wrong?</p>
+        {ERROR_TYPES.map(t => (
+          <label key={t.value} className="flex items-center gap-2.5 cursor-pointer">
+            <input
+              type="radio"
+              name="error_type"
+              value={t.value}
+              checked={errorType === t.value}
+              onChange={() => setErrorType(t.value)}
+              className="accent-blue-600"
+            />
+            <span className="text-sm text-gray-700">{t.label}</span>
+          </label>
+        ))}
+      </div>
+
+      <textarea
+        value={notes}
+        onChange={e => setNotes(e.target.value)}
+        placeholder="Additional details (optional)"
+        rows={2}
+        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+      />
+
+      <input
+        type="email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        placeholder="Your email (optional — we'll notify you when fixed)"
+        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      {status === "error" && <p className="text-xs text-red-500">Something went wrong — please try again.</p>}
+
+      <button
+        onClick={submit}
+        disabled={!errorType || status === "sending"}
+        className="w-full py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        {status === "sending" ? "Submitting…" : "Submit report"}
+      </button>
+    </div>
+  );
+}
+
 const COUNTRIES: Record<string, string> = {
   ZA:"South Africa",NG:"Nigeria",KE:"Kenya",GH:"Ghana",RW:"Rwanda",TZ:"Tanzania",
   UG:"Uganda",ET:"Ethiopia",ZM:"Zambia",ZW:"Zimbabwe",MA:"Morocco",MW:"Malawi",
@@ -99,6 +195,8 @@ export default function RecordPage() {
           </div>
         </div>
       )}
+
+      <ReportErrorWidget registrationId={id} />
     </div>
   );
 }
