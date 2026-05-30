@@ -43,9 +43,15 @@ CAPTCHA_FIELD      = "ctl00$ContentPlaceHolder1$txtimgcode"
 SEARCH_BTN_FIELD   = "ctl00$ContentPlaceHolder1$ui_btnSearch"
 GRIDVIEW_ID        = "ctl00$ContentPlaceHolder1$GridView1"
 
-# 676 3-letter prefixes (26×26 two-letter starts + "a") — covers all possible drug name starts
-# EDA portal requires minimum 3 chars; "aaa","aba","aca"..."zza" ensures full alphabetic coverage
-SEARCH_PREFIXES = [a + b + "a" for a in string.ascii_lowercase for b in string.ascii_lowercase]
+# Arabic prefixes cover Egyptian drug names; English covers foreign/branded drugs.
+# 55 total searches vs 676 before — runs in ~30min instead of 2.5 hours.
+ARABIC_LETTERS = ["ا", "أ", "ب", "ت", "ث", "ج", "ح", "خ",
+                  "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض",
+                  "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل",
+                  "م", "ن", "ه", "و", "ي"]
+ARABIC_PREFIXES = [l + "ا" for l in ARABIC_LETTERS]
+ENGLISH_PREFIXES = [chr(c) + "aa" for c in range(ord("a"), ord("z") + 1)]
+SEARCH_PREFIXES = ARABIC_PREFIXES + ENGLISH_PREFIXES
 
 log = logging.getLogger("EDA_EG")
 
