@@ -16,6 +16,7 @@ def parse_date(value) -> Optional[date]:
     for fmt in (
         "%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y", "%d-%m-%Y",
         "%d %B %Y", "%B %d, %Y", "%d-%b-%Y", "%Y/%m/%d",
+        "%Y %B %d", "%Y %b %d", "%d %b %Y", "%B %Y",
     ):
         try:
             return datetime.strptime(s, fmt).date()
