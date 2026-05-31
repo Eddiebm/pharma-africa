@@ -10,22 +10,22 @@ export const metadata: Metadata = {
 };
 
 const MARKETS = [
-  { name: "Nigeria",        code: "NG", regulator: "NAFDAC",    slug: "nigeria",        registrations: "60,000+" },
-  { name: "South Africa",   code: "ZA", regulator: "SAHPRA",    slug: "south-africa",   registrations: "16,000+" },
-  { name: "Kenya",          code: "KE", regulator: "PPB",       slug: "kenya",          registrations: "4,000+"  },
-  { name: "Ghana",          code: "GH", regulator: "FDA Ghana", slug: "ghana",          registrations: "2,500+"  },
-  { name: "Egypt",          code: "EG", regulator: "EDA",       slug: "egypt",          registrations: "3,000+"  },
-  { name: "Morocco",        code: "MA", regulator: "DMP",       slug: "morocco",        registrations: "2,000+"  },
-  { name: "Tunisia",        code: "TN", regulator: "DPM",       slug: "tunisia",        registrations: "1,500+"  },
-  { name: "Senegal",        code: "SN", regulator: "ARP",       slug: "senegal",        registrations: "1,000+"  },
-  { name: "Côte d'Ivoire",  code: "CI", regulator: "AIRP",      slug: "cote-divoire",   registrations: "1,200+"  },
-  { name: "Uganda",         code: "UG", regulator: "NDA",       slug: "uganda",         registrations: "1,800+"  },
-  { name: "Tanzania",       code: "TZ", regulator: "TMDA",      slug: "tanzania",       registrations: "1,600+"  },
-  { name: "Rwanda",         code: "RW", regulator: "RDA",       slug: "rwanda",         registrations: "800+"    },
-  { name: "Malawi",         code: "MW", regulator: "PMRA",      slug: "malawi",         registrations: "600+"    },
-  { name: "Zambia",         code: "ZM", regulator: "ZAMRA",     slug: "zambia",         registrations: "700+"    },
-  { name: "Zimbabwe",       code: "ZW", regulator: "MCAZ",      slug: "zimbabwe",       registrations: "900+"    },
-  { name: "Ethiopia",       code: "ET", regulator: "EFDA",      slug: "ethiopia",       registrations: "1,100+"  },
+  { name: "South Africa",   code: "ZA", regulator: "SAHPRA",    slug: "south-africa",   registrations: "18,000+" },
+  { name: "Ghana",          code: "GH", regulator: "FDA Ghana", slug: "ghana",          registrations: "15,000+" },
+  { name: "Nigeria",        code: "NG", regulator: "NAFDAC",    slug: "nigeria",        registrations: "8,700+"  },
+  { name: "Côte d'Ivoire",  code: "CI", regulator: "AIRP",      slug: "cote-divoire",   registrations: "7,100+"  },
+  { name: "Senegal",        code: "SN", regulator: "ARP",       slug: "senegal",        registrations: "6,900+"  },
+  { name: "Malawi",         code: "MW", regulator: "PMRA",      slug: "malawi",         registrations: "6,400+"  },
+  { name: "Tunisia",        code: "TN", regulator: "DPM",       slug: "tunisia",        registrations: "6,000+"  },
+  { name: "Morocco",        code: "MA", regulator: "DMP",       slug: "morocco",        registrations: "5,900+"  },
+  { name: "Zambia",         code: "ZM", regulator: "ZAMRA",     slug: "zambia",         registrations: "4,300+"  },
+  { name: "Uganda",         code: "UG", regulator: "NDA",       slug: "uganda",         registrations: "3,900+"  },
+  { name: "Zimbabwe",       code: "ZW", regulator: "MCAZ",      slug: "zimbabwe",       registrations: "3,800+"  },
+  { name: "Kenya",          code: "KE", regulator: "PPB",       slug: "kenya",          registrations: "2,500+"  },
+  { name: "Rwanda",         code: "RW", regulator: "RDA",       slug: "rwanda",         registrations: "2,400+"  },
+  { name: "Egypt",          code: "EG", regulator: "EDA",       slug: "egypt",          registrations: "500+"    },
+  { name: "Tanzania",       code: "TZ", regulator: "TMDA",      slug: "tanzania",       registrations: "Coming soon" },
+  { name: "Ethiopia",       code: "ET", regulator: "EFDA",      slug: "ethiopia",       registrations: "Coming soon" },
 ];
 
 export default function MarketsPage() {
@@ -50,7 +50,7 @@ export default function MarketsPage() {
         <div className="mb-10">
           <h1 className="text-3xl font-bold text-gray-900 mb-3">African Pharmaceutical Markets</h1>
           <p className="text-lg text-gray-500 max-w-2xl">
-            96,000+ drug registrations across 16 markets — searchable, filterable, and continuously updated from official regulatory authority sources.
+            93,000+ drug registrations across 16 markets — searchable, filterable, and continuously updated from official regulatory authority sources.
           </p>
         </div>
 
@@ -67,8 +67,8 @@ export default function MarketsPage() {
                   <p className="text-sm text-gray-500 mt-0.5">{m.regulator}</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-semibold text-gray-700">{m.registrations}</div>
-                  <div className="text-xs text-gray-400">registrations</div>
+                  <div className={`text-sm font-semibold ${m.registrations === "Coming soon" ? "text-gray-400" : "text-gray-700"}`}>{m.registrations}</div>
+                  {m.registrations !== "Coming soon" && <div className="text-xs text-gray-400">registrations</div>}
                 </div>
               </div>
             </Link>
