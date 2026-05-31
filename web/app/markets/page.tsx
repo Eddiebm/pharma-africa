@@ -16,6 +16,7 @@ const MARKETS = [
   { name: "Côte d'Ivoire",  code: "CI", regulator: "AIRP",      slug: "cote-divoire",   registrations: "7,100+"  },
   { name: "Senegal",        code: "SN", regulator: "ARP",       slug: "senegal",        registrations: "6,900+"  },
   { name: "Malawi",         code: "MW", regulator: "PMRA",      slug: "malawi",         registrations: "6,400+"  },
+  { name: "Egypt",          code: "EG", regulator: "EDA",       slug: "egypt",          registrations: "6,500+"  },
   { name: "Tunisia",        code: "TN", regulator: "DPM",       slug: "tunisia",        registrations: "6,000+"  },
   { name: "Morocco",        code: "MA", regulator: "DMP",       slug: "morocco",        registrations: "5,900+"  },
   { name: "Zambia",         code: "ZM", regulator: "ZAMRA",     slug: "zambia",         registrations: "4,300+"  },
@@ -23,7 +24,6 @@ const MARKETS = [
   { name: "Zimbabwe",       code: "ZW", regulator: "MCAZ",      slug: "zimbabwe",       registrations: "3,800+"  },
   { name: "Kenya",          code: "KE", regulator: "PPB",       slug: "kenya",          registrations: "2,500+"  },
   { name: "Rwanda",         code: "RW", regulator: "RDA",       slug: "rwanda",         registrations: "2,400+"  },
-  { name: "Egypt",          code: "EG", regulator: "EDA",       slug: "egypt",          registrations: "500+"    },
   { name: "Tanzania",       code: "TZ", regulator: "TMDA",      slug: "tanzania",       registrations: "Coming soon" },
   { name: "Ethiopia",       code: "ET", regulator: "EFDA",      slug: "ethiopia",       registrations: "Coming soon" },
 ];
@@ -50,7 +50,7 @@ export default function MarketsPage() {
         <div className="mb-10">
           <h1 className="text-3xl font-bold text-gray-900 mb-3">African Pharmaceutical Markets</h1>
           <p className="text-lg text-gray-500 max-w-2xl">
-            93,000+ drug registrations across 16 markets — searchable, filterable, and continuously updated from official regulatory authority sources.
+            99,000+ drug registrations across 16 markets — searchable, filterable, and continuously updated from official regulatory authority sources.
           </p>
         </div>
 
