@@ -69,7 +69,7 @@ export default async function BlogPage() {
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="mb-10">
           <h1 className="text-3xl font-bold text-gray-900">Regulatory Intelligence Blog</h1>
-          <p className="text-gray-500 mt-2">Data-driven analysis generated weekly from 95,000+ drug registrations across 15 African markets.</p>
+          <p className="text-gray-500 mt-2">Data-driven analysis generated weekly from 161,000+ drug registrations across 17 African markets.</p>
         </div>
 
         {posts.length === 0 ? (

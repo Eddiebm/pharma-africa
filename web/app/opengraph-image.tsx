@@ -46,7 +46,7 @@ export default function OGImage() {
           African Pharmaceutical Regulatory Intelligence
         </div>
         <div style={{ color: "#93c5fd", fontSize: "28px", fontWeight: 400 }}>
-          95,000+ drug registrations · 15 African markets
+          161,000+ drug registrations · 17 African markets
         </div>
       </div>
     ),

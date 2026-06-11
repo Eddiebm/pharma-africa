@@ -5,23 +5,24 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "African Pharmaceutical Markets — AfricaRegulatory",
-  description: "Browse drug registration data for 16 African pharmaceutical markets. Nigeria, South Africa, Kenya, Ghana, Egypt, Morocco, and more.",
+  description: "Browse drug registration data for 17 African pharmaceutical markets. Nigeria, South Africa, Kenya, Ghana, Egypt, Morocco, Uganda, Madagascar, and more.",
   alternates: { canonical: "https://africaregulatory.com/markets" },
 };
 
 const MARKETS = [
-  { name: "South Africa",   code: "ZA", regulator: "SAHPRA",    slug: "south-africa",   registrations: "18,000+" },
-  { name: "Ghana",          code: "GH", regulator: "FDA Ghana", slug: "ghana",          registrations: "15,000+" },
+  { name: "South Africa",   code: "ZA", regulator: "SAHPRA",    slug: "south-africa",   registrations: "18,200+" },
+  { name: "Ghana",          code: "GH", regulator: "FDA Ghana", slug: "ghana",          registrations: "15,600+" },
   { name: "Nigeria",        code: "NG", regulator: "NAFDAC",    slug: "nigeria",        registrations: "8,700+"  },
   { name: "Côte d'Ivoire",  code: "CI", regulator: "AIRP",      slug: "cote-divoire",   registrations: "7,100+"  },
   { name: "Senegal",        code: "SN", regulator: "ARP",       slug: "senegal",        registrations: "6,900+"  },
+  { name: "Egypt",          code: "EG", regulator: "EDA",       slug: "egypt",          registrations: "6,600+"  },
+  { name: "Uganda",         code: "UG", regulator: "NDA",       slug: "uganda",         registrations: "6,600+"  },
   { name: "Malawi",         code: "MW", regulator: "PMRA",      slug: "malawi",         registrations: "6,400+"  },
-  { name: "Egypt",          code: "EG", regulator: "EDA",       slug: "egypt",          registrations: "6,500+"  },
   { name: "Tunisia",        code: "TN", regulator: "DPM",       slug: "tunisia",        registrations: "6,000+"  },
   { name: "Morocco",        code: "MA", regulator: "DMP",       slug: "morocco",        registrations: "5,900+"  },
   { name: "Zambia",         code: "ZM", regulator: "ZAMRA",     slug: "zambia",         registrations: "4,300+"  },
-  { name: "Uganda",         code: "UG", regulator: "NDA",       slug: "uganda",         registrations: "3,900+"  },
-  { name: "Zimbabwe",       code: "ZW", regulator: "MCAZ",      slug: "zimbabwe",       registrations: "3,800+"  },
+  { name: "Zimbabwe",       code: "ZW", regulator: "MCAZ",      slug: "zimbabwe",       registrations: "3,900+"  },
+  { name: "Madagascar",     code: "MG", regulator: "AGMED",     slug: "madagascar",     registrations: "2,700+"  },
   { name: "Kenya",          code: "KE", regulator: "PPB",       slug: "kenya",          registrations: "2,500+"  },
   { name: "Rwanda",         code: "RW", regulator: "RDA",       slug: "rwanda",         registrations: "2,400+"  },
   { name: "Tanzania",       code: "TZ", regulator: "TMDA",      slug: "tanzania",       registrations: "Coming soon" },
@@ -48,9 +49,15 @@ export default function MarketsPage() {
 
       <div className="max-w-5xl mx-auto px-6 py-12">
         <div className="mb-10">
+          <div className="flex gap-2 mb-6">
+            <span className="px-4 py-2 text-sm rounded-full bg-blue-600 text-white font-medium">Pharmaceuticals</span>
+            <Link href="/agri" className="px-4 py-2 text-sm rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 bg-white">Agrochemicals</Link>
+            <Link href="/devices" className="px-4 py-2 text-sm rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 bg-white">Medical Devices</Link>
+            <Link href="/food" className="px-4 py-2 text-sm rounded-full border border-gray-200 text-gray-600 hover:border-gray-300 bg-white">Food Safety</Link>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-3">African Pharmaceutical Markets</h1>
           <p className="text-lg text-gray-500 max-w-2xl">
-            99,000+ drug registrations across 16 markets — searchable, filterable, and continuously updated from official regulatory authority sources.
+            161,000+ drug registrations across 17 markets — searchable, filterable, and continuously updated from official regulatory authority sources.
           </p>
         </div>
 

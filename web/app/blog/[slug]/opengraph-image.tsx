@@ -71,7 +71,7 @@ export default async function OGImage({ params }: { params: Promise<{ slug: stri
         </div>
 
         <div style={{ color: "#64748b", fontSize: "20px" }}>
-          African Pharmaceutical Regulatory Intelligence · 95,000+ registrations
+          African Pharmaceutical Regulatory Intelligence · 161,000+ registrations
         </div>
       </div>
     ),

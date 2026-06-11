@@ -182,8 +182,8 @@ export default function PricingPage() {
         {/* Trust signals */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
           {[
-            ["96,000+", "Drug registrations"],
-            ["16", "African markets"],
+            ["161,000+", "Drug registrations"],
+            ["17", "African markets"],
             ["19", "Regulatory bodies"],
             ["Daily", "Data updates"],
           ].map(([n, l]) => (

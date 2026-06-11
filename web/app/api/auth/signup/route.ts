@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     <div style="padding:32px;">
       <h2 style="color:#111827;margin:0 0 12px;font-size:20px;">You're in.</h2>
       <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 20px;">
-        You now have access to 96,000+ drug registrations across 16 African markets — searchable, filterable, and updated continuously.
+        You now have access to 161,000+ drug registrations across 17 African markets — searchable, filterable, and updated continuously.
       </p>
       <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 28px;">
         Start by searching your portfolio, or upgrade to Pro to get expiry alerts 90 days before registrations lapse.
