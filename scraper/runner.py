@@ -37,6 +37,7 @@ from bodies.angola_armed       import AngolaARMEDScraper
 from bodies.mozambique_dnam    import MozambiqueDNAMScraper
 from bodies.zimbabwe_mcaz      import ZimbabweMCAZScraper
 from bodies.zamra_zambia       import ZAMRAZambiaScraper
+from bodies.pcpb_kenya         import PCPBKenyaScraper
 
 logging.basicConfig(
     level=logging.INFO,
@@ -64,6 +65,7 @@ ALL_SCRAPERS = [
     MozambiqueDNAMScraper(),
     ZimbabweMCAZScraper(),
     ZAMRAZambiaScraper(),
+    PCPBKenyaScraper(),
 ]
 
 

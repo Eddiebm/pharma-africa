@@ -39,19 +39,78 @@ HEADERS = {
 
 TRADE_NAME_FIELD   = "ctl00$ContentPlaceHolder1$ui_txtTradeName"
 GENERIC_NAME_FIELD = "ctl00$ContentPlaceHolder1$ui_txtGeneric"
+APPLICANT_FIELD    = "ctl00$ContentPlaceHolder1$ui_txtApplicant"
 CAPTCHA_FIELD      = "ctl00$ContentPlaceHolder1$txtimgcode"
 SEARCH_BTN_FIELD   = "ctl00$ContentPlaceHolder1$ui_btnSearch"
 GRIDVIEW_ID        = "ctl00$ContentPlaceHolder1$GridView1"
 
-# Arabic prefixes cover Egyptian drug names; English covers foreign/branded drugs.
-# 55 total searches vs 676 before — runs in ~30min instead of 2.5 hours.
-ARABIC_LETTERS = ["ا", "أ", "ب", "ت", "ث", "ج", "ح", "خ",
-                  "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض",
-                  "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل",
-                  "م", "ن", "ه", "و", "ي"]
-ARABIC_PREFIXES = [l + "ا" for l in ARABIC_LETTERS]
-ENGLISH_PREFIXES = [chr(c) + "aa" for c in range(ord("a"), ord("z") + 1)]
-SEARCH_PREFIXES = ARABIC_PREFIXES + ENGLISH_PREFIXES
+# Strategy: applicant (company) searches + INN generic name prefixes.
+# Arabic prefix searches don't work — EDA stores names in English/Latin.
+# Random letter combos (aaa, baa...) have <1 unique result per search on average.
+# ~130 targeted searches vs 676 random ones — much higher yield per search.
+
+# Top Egyptian pharma companies + MNC subsidiaries registered with EDA
+APPLICANT_TERMS = [
+    # Local Egyptian manufacturers
+    "EIPICO", "CID", "Minapharm", "Pharco", "Memphis",
+    "Kahira", "Delta", "Nile", "Arab", "Egyptian",
+    "ATOS", "Amira", "Sigma", "Eva", "Global",
+    "Medical", "Mina", "October", "Alexandria", "Cairo",
+    "Rameda", "Adwia", "SEDICO", "MARCYRL", "Pfizer Egypt",
+    # More local Egyptian manufacturers
+    "Pharaonia", "Pharo", "Andalous", "Chemipharm", "Amoun",
+    "Mash", "Averroes", "ATCO", "Zeta", "Utopia",
+    "Biomed", "Apex", "Borg", "Medizen", "INAD",
+    "Unipharma", "Gypto", "Amriya", "Misr", "Egyphar",
+    "Organo", "NAPI", "Future", "Sunny", "Pharmacon",
+    "Acdima", "Pellets", "MDI", "Amriya", "Vetopharm",
+    # MNC subsidiaries
+    "Pfizer", "Novartis", "Roche", "GlaxoSmithKline", "GSK",
+    "AstraZeneca", "Sanofi", "MSD", "Abbott", "Bayer",
+    "Johnson", "Boehringer", "Servier", "Amgen", "Lilly",
+    "Merck", "Novo Nordisk", "Teva", "Hikma", "Sandoz",
+    "Cipla", "Sun Pharma", "KRKA", "Richter", "Stada",
+    "Fresenius", "Baxter", "Becton", "Medtronic", "Ipsen",
+]
+
+# Common INN/generic name 3-4 char prefixes with high drug coverage
+INN_PREFIXES = [
+    # Antibiotics / anti-infectives
+    "amo", "amp", "pen", "cip", "cef", "azi", "cla", "van",
+    "met", "tri", "sul", "nit", "flu", "tet", "str", "gen",
+    "lev", "mox", "imi", "mer", "pip", "lin",
+    # Cardiovascular
+    "ate", "bis", "pro", "nar", "val", "ram", "lis", "cap",
+    "eni", "tel", "can", "los", "irb", "nif", "amo",
+    "ato", "sim", "ros", "pra", "fur", "hyd", "spi",
+    # CNS
+    "par", "ser", "ven", "esc", "flu", "cit", "dul",
+    "ole", "ris", "que", "hal", "alp", "dia", "lor",
+    "phe", "car", "val", "lam", "top", "gab",
+    # Diabetes / metabolic
+    "gli", "glip", "glib", "met", "sit", "emp", "dag",
+    "ins", "lir", "exa", "pio",
+    # GI / pain / other
+    "ome", "lan", "pan", "eso", "rab", "dom", "ond",
+    "ibu", "dic", "ket", "cel", "tra", "mor", "cod",
+    "pre", "dex", "bet", "hyd", "mef", "ind",
+    # HIV / antiviral
+    "ten", "lam", "efa", "rit", "ata", "dol", "ral",
+    # Antimalarials
+    "art", "qui", "chl", "ato", "pri",
+    # Vitamins / supplements
+    "vit", "cal", "fer", "fol", "zin", "mag",
+    # Additional broad coverage
+    "acy", "alb", "ben", "col", "dap", "dox", "eth",
+    "fex", "hep", "iso", "lit", "meb", "neb", "nys",
+    "oxy", "ret", "tam", "thi", "var", "ace", "ald",
+    "alk", "all", "ami", "ani", "ant", "apo", "arn",
+    "asp", "ass", "bac", "bar", "bio", "bro", "bup",
+    "but", "cab", "chl", "clo", "co-",
+]
+# Deduplicate while preserving order
+_seen: set = set()
+INN_PREFIXES = [x for x in INN_PREFIXES if not (x in _seen or _seen.add(x))]
 
 log = logging.getLogger("EDA_EG")
 
@@ -139,14 +198,25 @@ def _map_columns(headers: list[str]) -> dict[str, int]:
 
 
 def _find_results_table(soup: BeautifulSoup):
+    # ASP.NET GridView — actual rendered ID on EDA portal
+    table = soup.find("table", {"id": "ContentPlaceHolder1_ui_GVDrugsData"})
+    if table:
+        return table
+
+    # Fallback: find a table where each header cell is a short column label
+    # (not the outer form table which has one massive cell containing all the HTML)
     for table in soup.find_all("table"):
-        rows = table.find_all("tr")
+        rows = table.find_all("tr", recursive=False)
         if len(rows) < 2:
             continue
-        headers_text = " ".join(
-            c.get_text().strip().lower() for c in rows[0].find_all(["th", "td"])
-        )
-        if any(x in headers_text for x in ["trade name", "generic name", "reg no", "applicant"]):
+        header_cells = rows[0].find_all(["th", "td"], recursive=False)
+        if len(header_cells) < 3:
+            continue
+        # Skip if any header cell is a blob (form table characteristic)
+        headers = [c.get_text().strip().lower() for c in header_cells]
+        if any(len(h) > 40 for h in headers):
+            continue
+        if any(x in headers for x in ["trade name", "generic name", "reg no", "applicant"]):
             return table
     return None
 
@@ -323,20 +393,23 @@ def _scrape_all(client: httpx.Client, api_key: str) -> list[RegistrationRecord]:
     resp.raise_for_status()
     current_html = resp.text
 
-    for field_name, field_label in [
-        (TRADE_NAME_FIELD, "trade"),
-        (GENERIC_NAME_FIELD, "generic"),
-    ]:
-        for prefix in SEARCH_PREFIXES:
-            # Each search needs a fresh CAPTCHA from the current session
+    # (field_name, label, terms_list)
+    search_plan = [
+        (APPLICANT_FIELD, "applicant", APPLICANT_TERMS),
+        (GENERIC_NAME_FIELD, "generic",  INN_PREFIXES),
+        (TRADE_NAME_FIELD,  "trade",     INN_PREFIXES),
+    ]
+
+    for field_name, field_label, terms in search_plan:
+        for term in terms:
             captcha = _solve_captcha(client, api_key)
             if not captcha:
-                log.warning(f"CAPTCHA solve failed for prefix '{prefix}', skipping")
+                log.warning(f"CAPTCHA solve failed for '{term}', skipping")
                 time.sleep(2)
                 continue
 
-            recs, last_html = _search_term(
-                client, field_name, prefix, captcha, current_html
+            recs, _ = _search_term(
+                client, field_name, term, captcha, current_html
             )
             new = 0
             for r in recs:
@@ -346,9 +419,9 @@ def _scrape_all(client: httpx.Client, api_key: str) -> list[RegistrationRecord]:
                     all_records.append(r)
                     new += 1
 
-            log.info(f"[EDA_EG] {field_label} '{prefix}': {new} new (total {len(all_records)})")
+            log.info(f"[EDA_EG] {field_label} '{term}': {new} new (total {len(all_records)})")
 
-            # Refresh base page periodically to keep session fresh
+            # Refresh base page to keep session alive
             try:
                 resp = client.get(SEARCH_URL, headers=HEADERS, timeout=30)
                 if "__VIEWSTATE" in resp.text:

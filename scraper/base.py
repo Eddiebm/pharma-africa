@@ -18,6 +18,7 @@ class RegistrationRecord:
     dosage_forms: list[str] = field(default_factory=list)
     source_url: str = ""
     source_type: str = "scrape"  # 'scrape' | 'document' | 'manual'
+    product_type: str = "pharma"  # 'pharma' | 'agri' | 'devices' | 'food'
     raw: dict = field(default_factory=dict)
 
 

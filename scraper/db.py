@@ -40,8 +40,8 @@ def upsert(conn: connection, record: RegistrationRecord) -> bool:
             INSERT INTO registrations (
                 inn, brand_name, country_code, registration_no, holder,
                 local_agent, status, expiry_date, dosage_forms,
-                source_url, source_type, raw_source_hash, last_verified
-            ) VALUES (%s,%s,%s,%s,%s, %s,%s,%s,%s, %s,%s,%s, now())
+                source_url, source_type, product_type, raw_source_hash, last_verified
+            ) VALUES (%s,%s,%s,%s,%s, %s,%s,%s,%s, %s,%s,%s,%s, now())
             ON CONFLICT (country_code, registration_no)
             DO UPDATE SET
                 last_verified   = now(),
@@ -53,6 +53,7 @@ def upsert(conn: connection, record: RegistrationRecord) -> bool:
                 local_agent     = EXCLUDED.local_agent,
                 dosage_forms    = EXCLUDED.dosage_forms,
                 source_url      = EXCLUDED.source_url,
+                product_type    = EXCLUDED.product_type,
                 raw_source_hash = EXCLUDED.raw_source_hash
             RETURNING id, (xmax = 0 OR raw_source_hash = %s) AS data_changed
         """, (
@@ -60,7 +61,7 @@ def upsert(conn: connection, record: RegistrationRecord) -> bool:
             record.registration_no or f"UNKNOWN-{h[:8]}",
             record.holder, record.local_agent,
             record.status, record.expiry_date, record.dosage_forms,
-            record.source_url, record.source_type, h,
+            record.source_url, record.source_type, record.product_type, h,
             h,
         ))
         row = cur.fetchone()

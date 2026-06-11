@@ -15,6 +15,7 @@ from normalize import parse_date, normalize_status, clean
 
 BASE_URL  = "https://products.pharmacyboardkenya.org/ppb_admin/pages/public_view_retention_products.php"
 HERBAL_URL = "https://products.pharmacyboardkenya.org/ppb_admin/pages/public_view_herbal.php"
+FOOD_URL   = "https://products.pharmacyboardkenya.org/ppb_admin/pages/public_view_food.php"
 AJAX_URL  = "https://products.pharmacyboardkenya.org/ppb_admin/xcrud/xcrud_ajax.php"
 COUNTRY_CODE = "KE"
 PAGE_SIZE = 100   # XCRUD supports up to 100 per request
@@ -140,8 +141,10 @@ def _parse_html(html: str, source_url: str) -> list[RegistrationRecord]:
 def _map_columns(headers: list[str]) -> dict[str, int]:
     mapping: dict[str, int] = {}
     for i, h in enumerate(headers):
+        if not h:
+            continue
         hl = h.lower()
-        if any(x in hl for x in ["reg no", "registration no", "product reg", "licence no", "license no"]):
+        if any(x in hl for x in ["reg no", "registration no", "product reg", "licence no", "license no", "food id"]):
             mapping.setdefault("reg_no", i)
         if any(x in hl for x in ["trade name", "product name", "product trade", "brand"]):
             mapping.setdefault("trade_name", i)
@@ -170,7 +173,9 @@ def _scrape_register(client: httpx.Client, page_url: str, label: str) -> list[Re
         return records
 
     start = 0
-    max_iterations = 200  # safety cap: 200 × 100 = 20,000 records
+    max_iterations = 500  # hard cap
+    seen_reg_nos: set[str] = set()
+    consecutive_empty = 0
 
     for _ in range(max_iterations):
         html = _post_page(client, xcrud_params, start, page_url)
@@ -179,6 +184,16 @@ def _scrape_register(client: httpx.Client, page_url: str, label: str) -> list[Re
         page_recs = _parse_html(html, page_url)
         if not page_recs:
             break
+        # Cycle detection: stop when a full page returns no new reg numbers
+        new_this_page = [r for r in page_recs if r.registration_no and r.registration_no not in seen_reg_nos]
+        seen_reg_nos.update(r.registration_no for r in page_recs if r.registration_no)
+        if not new_this_page:
+            consecutive_empty += 1
+            if consecutive_empty >= 2:
+                logging.info(f"[PPB_KE] {label}: cycle detected at start={start}, stopping")
+                break
+        else:
+            consecutive_empty = 0
         records.extend(page_recs)
         # Update params with rotated key from response
         xcrud_params = _update_params_from_response(html, xcrud_params)
@@ -198,6 +213,12 @@ class KenyaPPBScraper(BaseRegulatoryScraper):
         with httpx.Client(timeout=30, follow_redirects=True, verify=False) as client:
             records.extend(_scrape_register(client, BASE_URL,   "Human Medicines"))
             records.extend(_scrape_register(client, HERBAL_URL, "Herbal Medicines"))
+            food = _scrape_register(client, FOOD_URL, "Food Products")
+            # Prefix food IDs to avoid collision with pharma reg numbers
+            for r in food:
+                if r.registration_no:
+                    r.registration_no = "FOOD-" + r.registration_no
+            records.extend(food)
 
         self.log(f"Total fetched: {len(records)}")
         return records
