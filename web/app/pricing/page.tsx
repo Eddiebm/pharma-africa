@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const PLANS = [
   {
@@ -99,6 +99,15 @@ const FAQS = [
 
 export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [statsDisplay, setStatsDisplay] = useState("161,000+");
+  const [statsMarkets, setStatsMarkets] = useState(17);
+
+  useEffect(() => {
+    fetch("/api/stats").then(r => r.json()).then(d => {
+      setStatsDisplay(d.display);
+      setStatsMarkets(d.markets);
+    }).catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -182,8 +191,8 @@ export default function PricingPage() {
         {/* Trust signals */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
           {[
-            ["161,000+", "Drug registrations"],
-            ["17", "African markets"],
+            [statsDisplay, "Drug registrations"],
+            [String(statsMarkets), "African markets"],
             ["19", "Regulatory bodies"],
             ["Daily", "Data updates"],
           ].map(([n, l]) => (

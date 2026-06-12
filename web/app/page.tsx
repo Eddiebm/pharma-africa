@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import SearchBar from "./components/SearchBar";
 import ResultsTable from "./components/ResultsTable";
 
@@ -24,6 +24,15 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [searched, setSearched] = useState(false);
+  const [statsDisplay, setStatsDisplay] = useState("161,000+");
+  const [statsMarkets, setStatsMarkets] = useState(17);
+
+  useEffect(() => {
+    fetch("/api/stats").then(r => r.json()).then(d => {
+      setStatsDisplay(d.display);
+      setStatsMarkets(d.markets);
+    }).catch(() => {});
+  }, []);
 
   const handleSearch = useCallback(async (q: string, country: string, type: string = "") => {
     if (!q.trim()) return;
@@ -50,7 +59,7 @@ export default function Home() {
             <p className="text-xs text-gray-500">African Pharmaceutical Regulatory Intelligence</p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs text-gray-400 hidden sm:block">161,000+ registrations · 17 markets</span>
+            <span className="text-xs text-gray-400 hidden sm:block">{statsDisplay} registrations · {statsMarkets} markets</span>
             <a href="/agri" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Agri</a>
             <a href="/blog" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Blog</a>
             <a href="/reports" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Reports</a>
@@ -69,7 +78,7 @@ export default function Home() {
                 Drug registration status across Africa
               </h2>
               <p className="text-lg text-gray-500">
-                Search 161,000+ registrations across Nigeria, South Africa, Kenya, Ghana, Egypt, Senegal, Côte d'Ivoire, Tunisia, Morocco, Uganda, Rwanda, Malawi, Zimbabwe, Zambia and more.
+                Search {statsDisplay} registrations across Nigeria, South Africa, Kenya, Ghana, Egypt, Senegal, Côte d'Ivoire, Tunisia, Morocco, Uganda, Rwanda, Malawi, Zimbabwe, Zambia and more.
               </p>
             </div>
           )}
@@ -113,8 +122,8 @@ export default function Home() {
             {/* Stats bar */}
             <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto my-10 text-center">
               {[
-                { value: "161,000+", label: "Drug registrations" },
-                { value: "17",      label: "African markets" },
+                { value: statsDisplay, label: "Drug registrations" },
+                { value: String(statsMarkets), label: "African markets" },
                 { value: "Daily",   label: "Data updates" },
               ].map(s => (
                 <div key={s.label} className="bg-white rounded-xl border border-gray-200 py-5 px-4">

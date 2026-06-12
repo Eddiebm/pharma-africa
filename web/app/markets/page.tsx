@@ -2,6 +2,7 @@ export const runtime = "edge";
 
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getStats } from "../lib/stats";
 
 export const metadata: Metadata = {
   title: "African Pharmaceutical Markets — AfricaRegulatory",
@@ -29,7 +30,8 @@ const MARKETS = [
   { name: "Ethiopia",       code: "ET", regulator: "EFDA",      slug: "ethiopia",       registrations: "Coming soon" },
 ];
 
-export default function MarketsPage() {
+export default async function MarketsPage() {
+  const { display, markets } = await getStats();
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200">
@@ -57,7 +59,7 @@ export default function MarketsPage() {
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-3">African Pharmaceutical Markets</h1>
           <p className="text-lg text-gray-500 max-w-2xl">
-            161,000+ drug registrations across 17 markets — searchable, filterable, and continuously updated from official regulatory authority sources.
+            {display} drug registrations across {markets} markets — searchable, filterable, and continuously updated from official regulatory authority sources.
           </p>
         </div>
 

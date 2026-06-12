@@ -1,11 +1,13 @@
 import { ImageResponse } from "next/og";
+import { getStats } from "./lib/stats";
 
 export const runtime = "edge";
 export const alt = "AfricaRegulatory — African Pharmaceutical Regulatory Intelligence";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OGImage() {
+export default async function OGImage() {
+  const { display, markets } = await getStats();
   return new ImageResponse(
     (
       <div
@@ -46,7 +48,7 @@ export default function OGImage() {
           African Pharmaceutical Regulatory Intelligence
         </div>
         <div style={{ color: "#93c5fd", fontSize: "28px", fontWeight: 400 }}>
-          161,000+ drug registrations · 17 African markets
+          {display} drug registrations · {markets} African markets
         </div>
       </div>
     ),

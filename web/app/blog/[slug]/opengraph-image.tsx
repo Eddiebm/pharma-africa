@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { neon } from "@neondatabase/serverless";
+import { getStats } from "../../lib/stats";
 
 export const runtime = "edge";
 export const size = { width: 1200, height: 630 };
@@ -18,14 +19,20 @@ export default async function OGImage({ params }: { params: Promise<{ slug: stri
   let title = "AfricaRegulatory Intelligence Report";
   let category = "";
 
-  const dbUrl = process.env.DATABASE_URL;
-  if (dbUrl) {
-    const sql = neon(dbUrl);
-    const [post] = await sql`SELECT title, category FROM blog_posts WHERE slug = ${slug}`;
-    if (post) {
-      title = post.title as string;
-      category = CATEGORY_LABELS[post.category as string] || "";
-    }
+  const [{ display }, dbResult] = await Promise.all([
+    getStats(),
+    (async () => {
+      const dbUrl = process.env.DATABASE_URL;
+      if (!dbUrl) return null;
+      const sql = neon(dbUrl);
+      const [post] = await sql`SELECT title, category FROM blog_posts WHERE slug = ${slug}`;
+      return post ?? null;
+    })(),
+  ]);
+
+  if (dbResult) {
+    title = dbResult.title as string;
+    category = CATEGORY_LABELS[dbResult.category as string] || "";
   }
 
   return new ImageResponse(
@@ -71,7 +78,7 @@ export default async function OGImage({ params }: { params: Promise<{ slug: stri
         </div>
 
         <div style={{ color: "#64748b", fontSize: "20px" }}>
-          African Pharmaceutical Regulatory Intelligence · 161,000+ registrations
+          African Pharmaceutical Regulatory Intelligence · {display} registrations
         </div>
       </div>
     ),

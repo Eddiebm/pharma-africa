@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { getStats } from "./lib/stats";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,14 +13,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "AfricaRegulatory — African Pharmaceutical Regulatory Intelligence",
-  description: "Search 161,000+ drug registrations across 17 African markets. Track expiry dates, new approvals, and market opportunities.",
-  metadataBase: new URL("https://africaregulatory.com"),
-  verification: {
-    google: "E0ijiNWr8RmygHW3iS0Ave61YZQAaxg34Bw8EX3MnvU",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { display, markets } = await getStats();
+  return {
+    title: "AfricaRegulatory — African Pharmaceutical Regulatory Intelligence",
+    description: `Search ${display} drug registrations across ${markets} African markets. Track expiry dates, new approvals, and market opportunities.`,
+    metadataBase: new URL("https://africaregulatory.com"),
+    verification: {
+      google: "E0ijiNWr8RmygHW3iS0Ave61YZQAaxg34Bw8EX3MnvU",
+    },
+  };
+}
 
 export default function RootLayout({
   children,

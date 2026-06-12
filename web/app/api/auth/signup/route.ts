@@ -2,6 +2,7 @@ export const runtime = "edge";
 
 import { neon } from "@neondatabase/serverless";
 import { hashPassword, createToken, sessionCookieSet } from "@/app/lib/auth";
+import { getStats } from "@/app/lib/stats";
 
 export async function POST(req: Request) {
   const url = process.env.DATABASE_URL;
@@ -31,6 +32,7 @@ export async function POST(req: Request) {
   // Welcome email — fire and forget, never block signup
   const resendKey = process.env.RESEND_API_KEY;
   if (resendKey) {
+    const { display: statsDisplay, markets: statsMarkets } = await getStats().catch(() => ({ display: "161,000+", markets: 17 }));
     fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { "Authorization": `Bearer ${resendKey}`, "Content-Type": "application/json" },
@@ -49,7 +51,7 @@ export async function POST(req: Request) {
     <div style="padding:32px;">
       <h2 style="color:#111827;margin:0 0 12px;font-size:20px;">You're in.</h2>
       <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 20px;">
-        You now have access to 161,000+ drug registrations across 17 African markets — searchable, filterable, and updated continuously.
+        You now have access to ${statsDisplay} drug registrations across ${statsMarkets} African markets — searchable, filterable, and updated continuously.
       </p>
       <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 28px;">
         Start by searching your portfolio, or upgrade to Pro to get expiry alerts 90 days before registrations lapse.
