@@ -60,6 +60,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs text-gray-400 hidden sm:block">{statsDisplay} registrations · {statsMarkets} markets</span>
+            <a href="/drugs" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Drugs</a>
             <a href="/agri" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Agri</a>
             <a href="/blog" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Blog</a>
             <a href="/reports" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Reports</a>
