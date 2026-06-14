@@ -19,10 +19,32 @@ from normalize import parse_date, clean
 COUNTRY_CODE = "RW"
 BASE = "https://rwandafda.gov.rw"
 
-PDFS = {
-    "vet": BASE + "/monitoring-tool/documents-management/uploads/1/Registered-Products/1768297657_eRWANDA-FDA-VETERINARY-MEDICINAL-PRODUCTS-REGISTER-JULY-2025.pdf",
-    "food": BASE + "/wp-content/uploads/2026/04/eREG-002_Food-Products-Register_09-APRIL2026.pdf",
-}
+VET_PAGE  = BASE + "/veterinary-registration-registered-products-2/"
+FOOD_PAGE = BASE + "/food-registered-products/"
+
+def _discover_pdfs(client: httpx.Client) -> dict:
+    pdfs = {}
+    specs = [
+        ("vet",  VET_PAGE,  "VETERINARY-MEDICINAL-PRODUCTS-REGISTER"),
+        ("food", FOOD_PAGE, "Food-Products-Register"),
+    ]
+    for key, page_url, pattern in specs:
+        resp = client.get(page_url)
+        resp.raise_for_status()
+        html = resp.text
+        pos = 0
+        while pos < len(html):
+            dot_pdf = html.lower().find(".pdf", pos)
+            if dot_pdf < 0:
+                break
+            quote_start = max(html.rfind('"', 0, dot_pdf), html.rfind("'", 0, dot_pdf))
+            if quote_start >= 0:
+                link = html[quote_start + 1: dot_pdf + 4]
+                if pattern.lower() in link.lower():
+                    pdfs[key] = link if link.startswith("http") else BASE + "/" + link.lstrip("/")
+                    break
+            pos = dot_pdf + 4
+    return pdfs
 
 
 def _is_data_row(row):
@@ -60,7 +82,7 @@ def _parse_vet(pdf_bytes: bytes) -> list[RegistrationRecord]:
                         status="active",
                         expiry_date=parse_date(expiry_raw),
                         dosage_forms=[dosage] if dosage else [],
-                        source_url=PDFS["vet"],
+                        source_url=VET_PAGE,
                         source_type="document",
                         raw={"row": [str(c) for c in row]},
                     ))
@@ -95,7 +117,7 @@ def _parse_food(pdf_bytes: bytes) -> list[RegistrationRecord]:
                         status="active",
                         expiry_date=parse_date(expiry_raw),
                         dosage_forms=[],
-                        source_url=PDFS["food"],
+                        source_url=FOOD_PAGE,
                         source_type="document",
                         raw={"row": [str(c) for c in row]},
                     ))
@@ -109,9 +131,13 @@ class RwandaRDADocsScraper(BaseRegulatoryScraper):
 
     def fetch(self) -> list[RegistrationRecord]:
         records = []
-        with httpx.Client(timeout=120, follow_redirects=True) as client:
-            for label, url in PDFS.items():
-                self.log(f"Downloading {label} PDF...")
+        with httpx.Client(timeout=120, follow_redirects=True, verify=False) as client:
+            pdfs = _discover_pdfs(client)
+            if not pdfs:
+                self.log("No PDFs discovered — skipping")
+                return []
+            for label, url in pdfs.items():
+                self.log(f"Downloading {label} PDF from {url}")
                 resp = client.get(url, headers={"User-Agent": "Mozilla/5.0"})
                 resp.raise_for_status()
                 data = resp.content

@@ -121,11 +121,18 @@ class TunisiaDPMScraper(BaseRegulatoryScraper):
 
     def fetch(self) -> list[RegistrationRecord]:
         self.log(f"Downloading XLS from {XLS_URL}")
-        with httpx.Client(verify=False, follow_redirects=True, timeout=60,
+        with httpx.Client(verify=False, follow_redirects=True, timeout=180,
                           headers=HEADERS) as client:
-            resp = client.get(XLS_URL)
-            resp.raise_for_status()
-            self.log(f"Downloaded {len(resp.content):,} bytes")
+            for attempt in range(3):
+                try:
+                    resp = client.get(XLS_URL)
+                    resp.raise_for_status()
+                    self.log(f"Downloaded {len(resp.content):,} bytes")
+                    break
+                except Exception as e:
+                    if attempt == 2:
+                        raise
+                    self.log(f"Attempt {attempt+1} failed: {e} — retrying")
 
         wb = xlrd.open_workbook(file_contents=resp.content)
         records = _parse_sheet(wb)

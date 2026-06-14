@@ -18,7 +18,6 @@ AJAX_URL = (
     "&target_action=get-all-data"
     "&default_sorting=old_first"
     "&skip_rows=0&limit_rows=0"
-    "&ninja_table_public_nonce=0bbb86a021"
 )
 COUNTRY_CODE = "ZA"
 SOURCE_URL = "https://www.sahpra.org.za/list-of-registered-veterinary-product/"
