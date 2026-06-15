@@ -65,6 +65,7 @@ export default function Home() {
             <a href="/blog" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Blog</a>
             <a href="/reports" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Reports</a>
             <a href="/pricing" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
+            <a href="/advertise" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Advertise</a>
             <a href="/login" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Sign in</a>
             <a href="/signup" className="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">Sign up free</a>
           </div>

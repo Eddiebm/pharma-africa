@@ -19,7 +19,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/drugs`,    lastModified: new Date(), changeFrequency: "weekly",  priority: 0.9 },
     { url: `${BASE}/markets`,  lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/reports`,  lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/pricing`,  lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/pricing`,   lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/advertise`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/signup`,   lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/login`,    lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
     ...MARKET_SLUGS.map(slug => ({
