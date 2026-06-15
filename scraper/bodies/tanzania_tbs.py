@@ -23,20 +23,19 @@ def _discover_pdfs(client: httpx.Client) -> dict[str, str]:
     try:
         resp = client.get(REGISTER_PAGE, headers=HEADERS, timeout=30)
         resp.raise_for_status()
+        html = resp.text
+        for match in re.finditer(r'href=["\']([^"\']+\.pdf)["\']', html, re.IGNORECASE):
+            href = match.group(1)
+            url = href if href.startswith("http") else BASE + "/" + href.lstrip("/")
+            upper = url.upper()
+            if "COSMETIC" in upper and "cosmetics" not in pdfs:
+                pdfs["cosmetics"] = url
+            elif "FOOD" in upper and "food" not in pdfs:
+                pdfs["food"] = url
     except Exception:
-        return pdfs
+        pass
 
-    html = resp.text
-    for match in re.finditer(r'href=["\']([^"\']+\.pdf)["\']', html, re.IGNORECASE):
-        href = match.group(1)
-        url = href if href.startswith("http") else BASE + "/" + href.lstrip("/")
-        upper = url.upper()
-        if "COSMETIC" in upper and "cosmetics" not in pdfs:
-            pdfs["cosmetics"] = url
-        elif "FOOD" in upper and "food" not in pdfs:
-            pdfs["food"] = url
-
-    # Fallback to known-good URLs if page scrape misses them
+    # Fallback to known-good URLs if page scrape missed them
     if "cosmetics" not in pdfs:
         pdfs["cosmetics"] = BASE + "/uploads/files/REGISTERED%20COSMETIC%20PRODUCTS%20UP%20TO%20SEPTEMBER%202025.pdf"
     if "food" not in pdfs:
