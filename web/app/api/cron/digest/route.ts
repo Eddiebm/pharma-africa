@@ -21,7 +21,7 @@ function buildDigestEmail(
   const weekStr = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" });
 
   const approvalsHtml = newApprovals.length === 0
-    ? `<tr><td colspan="3" style="padding:12px;text-align:center;color:#9ca3af;font-size:13px;">No new approvals this week</td></tr>`
+    ? `<tr><td colspan="3" style="padding:12px;text-align:center;color:#9ca3af;font-size:13px;">No new approvals today</td></tr>`
     : newApprovals.slice(0, 10).map(r => `
       <tr>
         <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;font-weight:500;color:#111827;font-size:13px;">${r.brand_name || r.inn}</td>
@@ -30,7 +30,7 @@ function buildDigestEmail(
       </tr>`).join("");
 
   const expiryHtml = expiryWatch.length === 0
-    ? `<tr><td colspan="3" style="padding:12px;text-align:center;color:#9ca3af;font-size:13px;">No critical expiries this week</td></tr>`
+    ? `<tr><td colspan="3" style="padding:12px;text-align:center;color:#9ca3af;font-size:13px;">No critical expiries today</td></tr>`
     : expiryWatch.slice(0, 8).map(r => {
         const days = Math.ceil((new Date(r.expiry_date as string).getTime() - Date.now()) / 86400000);
         const color = days <= 30 ? "#dc2626" : "#d97706";
@@ -50,21 +50,21 @@ function buildDigestEmail(
 
     <div style="background:#1d4ed8;padding:20px 28px;">
       <div style="color:#fff;font-size:16px;font-weight:700;">AfricaRegulatory</div>
-      <div style="color:#93c5fd;font-size:12px;margin-top:2px;">Weekly Regulatory Digest · ${weekStr}</div>
+      <div style="color:#93c5fd;font-size:12px;margin-top:2px;">Daily Regulatory Digest · ${weekStr}</div>
     </div>
 
     <div style="padding:28px;">
 
       <p style="color:#374151;font-size:14px;margin:0 0 24px;line-height:1.6;">
-        Here's your weekly snapshot of African pharmaceutical regulatory activity across 16 markets.
+        Here's today's snapshot of African pharmaceutical regulatory activity across 16 markets.
       </p>
 
       <!-- New Approvals -->
       <h2 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 4px;">
-        New approvals this week
+        New approvals today
         <span style="font-weight:400;color:#6b7280;font-size:13px;">(${totalNew} total)</span>
       </h2>
-      <p style="font-size:12px;color:#9ca3af;margin:0 0 12px;">Registrations added or verified in the last 7 days</p>
+      <p style="font-size:12px;color:#9ca3af;margin:0 0 12px;">Registrations added or verified in the last 24 hours</p>
       <div style="overflow-x:auto;margin-bottom:28px;">
         <table style="width:100%;border-collapse:collapse;border:1px solid #f3f4f6;border-radius:8px;overflow:hidden;">
           <thead>
@@ -142,7 +142,7 @@ export async function POST(req: Request) {
     FROM registrations
     WHERE source_type != 'alert'
       AND status = 'active'
-      AND last_verified >= NOW() - INTERVAL '7 days'
+      AND last_verified >= NOW() - INTERVAL '24 hours'
     ORDER BY last_verified DESC
     LIMIT 20
   `;
@@ -164,7 +164,7 @@ export async function POST(req: Request) {
     newApprovals.length,
   );
 
-  const subject = `African pharma digest — ${new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long" })}`;
+  const subject = `AfricaRegulatory daily digest — ${new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}`;
 
   let sent = 0;
   let errors = 0;
